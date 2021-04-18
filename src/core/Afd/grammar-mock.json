@@ -1,0 +1,51 @@
+{
+  "accept":{
+    "name": "my-grammar-1",
+    "states": [
+      "q0"
+    ],
+    "alphbet": [
+      "a"
+    ],
+    "productions": {
+      "q0": {
+        "a": "q0"
+      }
+    },
+    "initialState": "q0",
+    "terminals": ["q0"]
+  },
+  "reject-alphbet":{
+    "name": "my-grammar-2",
+    "states": [
+      "q0"
+    ],
+    "alphbet": [
+      "a"
+    ],
+    "productions": {
+      "q0": {
+        "a": "q0",
+        "b": "q0"
+      }
+    },
+    "initialState": "q0",
+    "terminals": ["q0"]
+  },
+  "reject-state":{
+    "name": "my-grammar-3",
+    "states": [
+      "q0"
+    ],
+    "alphbet": [
+      "a"
+    ],
+    "productions": {
+      "q0": {
+        "a": "q1"
+      }
+    },
+    "initialState": "q0",
+    "terminals": ["q0"]
+  }
+}
