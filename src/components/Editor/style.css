@@ -1,0 +1,27 @@
+#editor {
+  width: fit-content;
+  padding: 1rem;
+}
+
+.editor__controlsBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.editor__editorControl {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor__editorControl > label {
+  margin-bottom: 0.5rem;
+}
+
+.editor__fileLabel {
+  margin-bottom: 0.5rem;
+
+}
