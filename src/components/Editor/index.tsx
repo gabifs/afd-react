@@ -186,9 +186,11 @@ export default function Editor(props:IEditorProps) {
                 className={`nes-input is-${item.result}`}
                 placeholder={window.__AFD__?"Insira uma palavra":"Crie um Automato"}
               />
-              <details>
+              <details style={{marginTop:'1rem'}}>
                 <summary>Histórico</summary>
-                <div className="nes-container is-rounded is-dark">
+                <div
+                  className="nes-container is-rounded is-dark"
+                  style={{textAlign:"center"}}>
                   {
                     item.history.map(([currenteState, simbol, newState]) => (
                       <p>
