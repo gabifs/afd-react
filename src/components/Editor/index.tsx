@@ -107,6 +107,10 @@ export default function Editor(props:IEditorProps) {
     ])
   }
 
+  function closeInput(key:number){
+    setWordList(wordList.filter((word, index) => key !== index))
+  }
+
   const InputMessage = (props:IInputMessage) => {
     switch(props.result){
       case("warning"):
@@ -167,7 +171,13 @@ export default function Editor(props:IEditorProps) {
         {
           wordList.map((item, index)=>(
             <div key={index} className="editor__wordsInputs nes-container is-rounded">
-              <InputMessage result={item.result} />
+              <div className="editor__inputHeader">
+                <InputMessage result={item.result} />
+                <button
+                  className="nes-btn is-error"
+                  onClick={() => closeInput(index)}
+                >X</button>
+              </div>
               <input
                 type="text"
                 value={item.word}
@@ -181,9 +191,18 @@ export default function Editor(props:IEditorProps) {
                   {
                     item.history.map(([currenteState, simbol, newState]) => (
                       <p>
-                        <strong>{currenteState} </strong>
-                        <span>{` (${simbol}) `}</span>
-                        <strong> {newState}</strong>
+                        <strong className="nes-text is-success">{currenteState} </strong>
+                        {newState ? (
+                          <>
+                            <span className="nes-text is-primary">{` (${simbol}) `}</span>
+                            <strong className="nes-text is-success"> {newState}</strong>
+                          </>
+                        ) : (
+                          <>
+                            <span className="nes-text is-error">{` (${simbol}) `}</span>
+                          </>
+                        )
+                        }
                       </p>
                     ))
                   }
