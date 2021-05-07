@@ -158,6 +158,7 @@ export default function Editor(props:IEditorProps) {
             onChange={handleGrammarChange}
             spellCheck="false"
             className="nes-textarea"
+            wrap="soft"
           />
         </div>
       </div>
