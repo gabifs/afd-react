@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from 'react'
 import './style.css'
 
 interface IEditorProps{
@@ -7,6 +8,7 @@ interface IEditorProps{
 
 export default function Editor(props:IEditorProps) {
   const [grammar, setGrammar] = props.grammarState
+  const [word, setWord] = useState('')
 
   function handleNewFile(event:React.ChangeEvent<HTMLInputElement>) {
     event.preventDefault()
@@ -30,35 +32,56 @@ export default function Editor(props:IEditorProps) {
     setGrammar(event.target.value)
   }
 
+
+
   return (
     <section id="editor">
-    <form>
-      <nav className="editor__controlsBar">
-        <div className="editor__editorControl">
-          <label>
-            Selecione um arquivo
-          </label>
-          <input
-            type="file"
-            className="editor__fileInput"
-            onChange={handleNewFile}
+      <div className="editor__group1 nes-container is-rounded">
+        <nav className="editor__controlsBar">
+          <div className="editor__editorControl">
+            <label className="nes-btn is-primary">
+              <span>
+                Selecione um arquivo
+              </span>
+              <input
+                type="file"
+                className="editor__fileInput is-primary"
+                onChange={handleNewFile}
+              />
+            </label>
+          </div>
+          <div className="editor__editorControl">
+            <input
+              type="button"
+              value="Executar"
+              className="nes-btn is-success"
+            />
+          </div>
+        </nav>
+        <div className="editor__textEditor nes-field">
+          <textarea
+            name="editor"
+            cols={90}
+            rows={30}
+            value={grammar}
+            onChange={handleGrammarChange}
+            className="nes-textarea"
           />
         </div>
-        <div className="editor__editorControl">
-          <label>Criar Automato</label>
-          <input type="button" value="Executar"/>
-        </div>
-      </nav>
-      <div className="editor__textEditor">
-        <textarea
-          name="editor"
-          cols={90}
-          rows={30}
-          value={grammar}
-          onChange={handleGrammarChange}
-        />
       </div>
-    </form>
+      <div className="editor__group2 nes-container is-rounded">
+        <div className="editor__wordsInputs nes-container is-rounded">
+          <label>Input 1</label>
+          <input
+            type="text"
+            value={word}
+            onChange={(e) => setWord(e.target.value)}
+            className="nes-input is-warning"
+            placeholder="Insira uma palavra"
+          />
+        </div>
+
+      </div>
     </section>
   )
 }

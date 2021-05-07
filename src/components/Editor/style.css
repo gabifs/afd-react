@@ -1,6 +1,6 @@
 #editor {
-  width: fit-content;
   padding: 1rem;
+  display: flex;
 }
 
 .editor__controlsBar {
@@ -24,4 +24,16 @@
 .editor__fileLabel {
   margin-bottom: 0.5rem;
 
+}
+
+.editor__textEditor > textarea {
+  font-size: 1.2rem;
+  color: rgba(0, 0, 0, 0.8)
+}
+
+.editor__group2 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
