@@ -187,7 +187,7 @@ export default function Editor(props:IEditorProps) {
               />
               <details>
                 <summary>Histórico</summary>
-                <div className="nes-container is-rounded">
+                <div className="nes-container is-rounded is-dark">
                   {
                     item.history.map(([currenteState, simbol, newState]) => (
                       <p>
