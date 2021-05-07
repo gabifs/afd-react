@@ -2,13 +2,29 @@ import React from 'react'
 import { useState } from 'react'
 import './style.css'
 
+import Afd from '../../core/Afd'
+
+declare global {
+  var __AFD__: Afd;
+}
+
 interface IEditorProps{
   grammarState: [string, Function]
 }
 
+interface IInputMessage{
+  result: string
+}
+
 export default function Editor(props:IEditorProps) {
   const [grammar, setGrammar] = props.grammarState
-  const [word, setWord] = useState('')
+  const [wordList, setWordList] = useState([
+    {
+      word: '',
+      result: 'disabled',
+      history: []
+    }
+  ])
 
   function handleNewFile(event:React.ChangeEvent<HTMLInputElement>) {
     event.preventDefault()
@@ -32,7 +48,77 @@ export default function Editor(props:IEditorProps) {
     setGrammar(event.target.value)
   }
 
+  function executeFor(key:number, newWord:string):void{
+    setWordList(wordList.map((item, index)=>{
+      if(window.__AFD__){
+        if(index === key){
+          if(newWord){
+            window.__AFD__.history = []
+            if(window.__AFD__.run(newWord)){
+              return {
+                word: newWord,
+                result: 'success',
+                history: window.__AFD__.history
+              }
+            }else{
+              return {
+                word: newWord,
+                result: 'error',
+                history: window.__AFD__.history
+              }
+            }
+          }else{
+            return {
+              word: newWord,
+              result: 'warning',
+              history: []
+            }
+          }
+        }else{
+          return item
+        }
+      }else{
+        return {
+          word: '',
+          result: 'disabled',
+          history: []
+        }
+      }
+    }))
+  }
 
+  function createAfd(grammar:string){
+    window.__AFD__ = new Afd(grammar)
+    setWordList(wordList.map(() => ({
+      word: '',
+      result: 'warning',
+      history: []
+    })))
+  }
+
+  function addInput(){
+    setWordList([
+      ...wordList,
+      {
+        word: '',
+        result: 'warning',
+        history: []
+      }
+    ])
+  }
+
+  const InputMessage = (props:IInputMessage) => {
+    switch(props.result){
+      case("warning"):
+        return (<label className="nes-text is-warning">Nenhuma palavra</label>)
+      case("error"):
+        return (<label className="nes-text is-error">Palavra rejeitada</label>)
+      case("success"):
+        return (<label className="nes-text is-success">Palavra aceita</label>)
+      case("disabled"):
+        return (<label className="nes-text is-disabled">Crie um AFD</label>)
+    }
+  }
 
   return (
     <section id="editor">
@@ -55,6 +141,7 @@ export default function Editor(props:IEditorProps) {
               type="button"
               value="Executar"
               className="nes-btn is-success"
+              onClick={() => createAfd(grammar)}
             />
           </div>
         </nav>
@@ -65,21 +152,47 @@ export default function Editor(props:IEditorProps) {
             rows={30}
             value={grammar}
             onChange={handleGrammarChange}
+            spellCheck="false"
             className="nes-textarea"
           />
         </div>
       </div>
       <div className="editor__group2 nes-container is-rounded">
-        <div className="editor__wordsInputs nes-container is-rounded">
-          <label>Input 1</label>
-          <input
-            type="text"
-            value={word}
-            onChange={(e) => setWord(e.target.value)}
-            className="nes-input is-warning"
-            placeholder="Insira uma palavra"
-          />
-        </div>
+        <input
+          type="button"
+          value="Add input"
+          className={`nes-btn is-${window.__AFD__ ? "warning" : "disabled"}`}
+          onClick={() => addInput()}
+        />
+        {
+          wordList.map((item, index)=>(
+            <div key={index} className="editor__wordsInputs nes-container is-rounded">
+              <InputMessage result={item.result} />
+              <input
+                type="text"
+                value={item.word}
+                onChange={(e) => executeFor(index, e.target.value)}
+                className={`nes-input is-${item.result}`}
+                placeholder={window.__AFD__?"Insira uma palavra":"Crie um Automato"}
+              />
+              <details>
+                <summary>Histórico</summary>
+                <div className="nes-container is-rounded">
+                  {
+                    item.history.map(([currenteState, simbol, newState]) => (
+                      <p>
+                        <strong>{currenteState} </strong>
+                        <span>{` (${simbol}) `}</span>
+                        <strong> {newState}</strong>
+                      </p>
+                    ))
+                  }
+                </div>
+              </details>
+            </div>
+            )
+          )
+        }
 
       </div>
     </section>
