@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
+import swal from 'sweetalert';
 import './style.css'
 
 import Afd from '../../core/Afd'
@@ -81,12 +82,16 @@ export default function Editor(props:IEditorProps) {
   }
 
   function createAfd(grammar:string){
-    window.__AFD__ = new Afd(grammar)
-    setWordList(wordList.map(() => ({
-      word: '',
-      result: window.__AFD__.run('') ? 'success' : 'error',
-      history: []
-    })))
+    try{
+      window.__AFD__ = new Afd(grammar)
+      setWordList(wordList.map(() => ({
+        word: '',
+        result: window.__AFD__.run('') ? 'success' : 'error',
+        history: []
+      })))
+    }catch(err){
+      swal("Erro na execução", err.message, "error")
+    }
   }
 
   function addInput(){

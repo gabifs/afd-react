@@ -93,7 +93,7 @@ export default class Afd {
   protected _validatesProductions(productions:object):object {
 
     if(Object.keys(productions).find(prodState => !this.states.includes(prodState))) {
-      throw new Error("Erro: Estado da produção indefinido")
+      throw new Error("Estado da produção indefinido")
     }
 
     const prodStates:Set<string> = new Set(Object
@@ -101,7 +101,7 @@ export default class Afd {
                                             .reduce((combined, prog) => [...combined, ...Object.values(prog)] ,[]))
 
     if([...prodStates].find(prodState => !this.states.includes(prodState))){
-      throw new Error("Erro: Estado da produção indefinido")
+      throw new Error("Estado da produção indefinido")
     }
 
     const prodSymbols:Set<string> = new Set(Object
@@ -109,7 +109,7 @@ export default class Afd {
                                             .reduce((combined, prog) => [...combined, ...Object.keys(prog)] ,[]))
 
     if([...prodSymbols].find(prodSymbol => !this.alphbet.includes(prodSymbol))){
-      throw new Error("Erro: Simbolo da produção indefinido");
+      throw new Error("Simbolo da produção indefinido");
     }
 
     return productions
