@@ -52,31 +52,24 @@ export default function Editor(props:IEditorProps) {
     setWordList(wordList.map((item, index)=>{
       if(window.__AFD__){
         if(index === key){
-          if(newWord){
-            window.__AFD__.history = []
-            if(window.__AFD__.run(newWord)){
-              return {
-                word: newWord,
-                result: 'success',
-                history: window.__AFD__.history
-              }
-            }else{
-              return {
-                word: newWord,
-                result: 'error',
-                history: window.__AFD__.history
-              }
+          window.__AFD__.history = []
+          if(window.__AFD__.run(newWord)){
+            return {
+              word: newWord,
+              result: 'success',
+              history: window.__AFD__.history
             }
           }else{
             return {
               word: newWord,
-              result: 'warning',
-              history: []
+              result: 'error',
+              history: window.__AFD__.history
             }
           }
         }else{
           return item
         }
+
       }else{
         return {
           word: '',
@@ -91,7 +84,7 @@ export default function Editor(props:IEditorProps) {
     window.__AFD__ = new Afd(grammar)
     setWordList(wordList.map(() => ({
       word: '',
-      result: 'warning',
+      result: window.__AFD__.run('') ? 'success' : 'error',
       history: []
     })))
   }
@@ -101,20 +94,18 @@ export default function Editor(props:IEditorProps) {
       ...wordList,
       {
         word: '',
-        result: 'warning',
+        result: window.__AFD__.run('') ? 'success' : 'error',
         history: []
       }
     ])
   }
 
   function closeInput(key:number){
-    setWordList(wordList.filter((word, index) => key !== index))
+    setWordList(wordList.filter((_word, index) => key !== index))
   }
 
   const InputMessage = (props:IInputMessage) => {
     switch(props.result){
-      case("warning"):
-        return (<label className="nes-text is-warning">Nenhuma palavra</label>)
       case("error"):
         return (<label className="nes-text is-error">Palavra rejeitada</label>)
       case("success"):
@@ -192,8 +183,8 @@ export default function Editor(props:IEditorProps) {
                   className="nes-container is-rounded is-dark"
                   style={{textAlign:"center"}}>
                   {
-                    item.history.map(([currenteState, simbol, newState]) => (
-                      <p>
+                    item.history.map(([currenteState, simbol, newState], index) => (
+                      <p key={index}>
                         <strong className="nes-text is-success">{currenteState} </strong>
                         {newState ? (
                           <>
