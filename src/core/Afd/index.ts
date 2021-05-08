@@ -31,10 +31,12 @@ export default class Afd {
     this.alphbet = ['',...alphbet]
 
     this.productions = this._validatesProductions(productions)
-    this.initialState = initialState
+    this.initialState = this._validatesInitialState(initialState)
+    this.terminals = this._validatesTerminals(terminals)
     this.currentState = initialState
-    this.terminals = terminals
     this.history = []
+
+    // this._minimization()
   }
 
   run(word: string|Array<string> ):boolean{
@@ -114,4 +116,23 @@ export default class Afd {
 
     return productions
   }
+
+  protected _validatesInitialState(initialState:string){
+    if(this.states.includes(initialState)){
+      return initialState
+    }else{
+      throw new Error("Estado inicial não pertence ao conjunto de estados!")
+    }
+  }
+
+  protected _validatesTerminals(terminals:Array<string>){
+    return terminals.map(state => {
+      if(this.states.includes(state)){
+        return state
+      }else {
+        throw new Error("Estado indefinido entre os estados terminais")
+      }
+    })
+  }
+
 }

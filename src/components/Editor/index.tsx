@@ -93,7 +93,7 @@ export default function Editor(props:IEditorProps) {
         history: window.__AFD__.history
       })))
     }catch(err){
-      swal("Erro na execução", err.message, "error")
+      swal("Erro na criação", err.message, "error")
     }
   }
 
