@@ -13,10 +13,6 @@ interface IEditorProps{
   grammarState: [string, Function]
 }
 
-interface IInputMessage{
-  result: string
-}
-
 export default function Editor(props:IEditorProps) {
   const [grammar, setGrammar] = props.grammarState
   const [wordList, setWordList] = useState([
@@ -33,13 +29,20 @@ export default function Editor(props:IEditorProps) {
     const file = event.target.files[0];
 
     if (file) {
-      const reader = new FileReader();
+      try {
+        const reader = new FileReader();
 
-      reader.onloadend= () => {
-        setGrammar(reader.result as string)
+        reader.onloadend= () => {
+          setGrammar(reader.result as string)
+        }
+
+        reader.readAsText(file);
+      } catch (err) {
+        swal('Erro', err.message, "error")
       }
 
-      reader.readAsText(file);
+    }else {
+      swal("Nenhum arquivo")
     }
   }
 
@@ -109,7 +112,11 @@ export default function Editor(props:IEditorProps) {
     setWordList(wordList.filter((_word, index) => key !== index))
   }
 
-  const InputMessage = (props:IInputMessage) => {
+  interface IInputMessageProps{
+    result: string
+  }
+
+  const InputMessage = (props:IInputMessageProps) => {
     switch(props.result){
       case("error"):
         return (<label className="nes-text is-error">Palavra rejeitada</label>)
@@ -118,6 +125,30 @@ export default function Editor(props:IEditorProps) {
       case("disabled"):
         return (<label className="nes-text is-disabled">Crie um AFD</label>)
     }
+  }
+
+  interface IHistoryMessageProps {
+    lastRound: [string, string, string|undefined]
+  }
+
+  const HistoryMessage = (props:IHistoryMessageProps) => {
+    const symbol = props.lastRound[1]
+    const lastState = props.lastRound[2]
+
+    if(window.__AFD__.alphbet.includes(symbol)){
+      if(lastState){
+        if(window.__AFD__.terminals.includes(lastState)){
+          return (<p className="nes-text is-success">Palavra aceita</p>)
+        }else{
+          return (<p className="nes-text is-error">Estado final não é terminal</p>)
+        }
+      }else{
+        return (<p className="nes-text is-error">Produção indefinida</p>)
+      }
+    }else{
+      return (<p className="nes-text is-error">Simbolo não pertence ao alfabeto</p>)
+    }
+
   }
 
   return (
@@ -190,22 +221,26 @@ export default function Editor(props:IEditorProps) {
                   {
                     item.history.map(([currenteState, simbol, newState], index) => (
                       <p key={index}>
-                        <strong className="nes-text is-success">{currenteState} </strong>
+                        <span className="nes-text is-warning">{`${index+1}) `}</span>
+                        <strong className="nes-text is-success">{currenteState}</strong>
                         {newState ? (
                           <>
-                            <span className="nes-text is-primary">{` (${simbol}) `}</span>
-                            <strong className="nes-text is-success"> {newState}</strong>
+                            |<span className="nes-text is-primary">{`(${simbol})`}</span>
+                            |<strong className="nes-text is-success">{newState}</strong>
                           </>
                         ) : (
                           <>
-                            <span className="nes-text is-error">{` (${simbol}) `}</span>
+                            |<span className="nes-text is-error">{`(${simbol})`}</span>
                           </>
                         )
                         }
                       </p>
                     ))
                   }
-                </div>
+                  {
+                    item.history.length ? <HistoryMessage lastRound={item.history[item.history.length -1]}/> : ''
+                  }
+                  </div>
               </details>
             </div>
             )
