@@ -28,7 +28,7 @@ export default class Afd {
 
     this.name = name
     this.states = states
-    this.alphbet = alphbet
+    this.alphbet = ['',...alphbet]
 
     this.productions = this._validatesProductions(productions)
     this.initialState = initialState
@@ -40,12 +40,13 @@ export default class Afd {
   run(word: string|Array<string> ):boolean{
     // Verifica palavra vazia
     if(!word){
+      this.history=[[this.initialState, '', this.initialState]]
       return this.terminals.includes(this.initialState)
     }
 
     const [head, ...tail] = word;
 
-    const newState = this.productions[this.currentState][head]
+    const newState = this.productions[this.currentState]? this.productions[this.currentState][head] : undefined
 
     this.history.push([this.currentState, head, newState])
 
@@ -75,9 +76,8 @@ export default class Afd {
     }else {
       /* novo estado não existe:
          - simbolo lido não pertence ao alfabeto
-         - simbolo lido não está ligado ou estado atual
+         - simbolo lido não está ligado ao estado atual
          - estado atual não pertence ao conjunto de estados */
-
       this._moveTo( this.initialState )
       return false
     }

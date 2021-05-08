@@ -90,7 +90,7 @@ export default function Editor(props:IEditorProps) {
       setWordList(wordList.map(() => ({
         word: '',
         result: window.__AFD__.run('') ? 'success' : 'error',
-        history: []
+        history: window.__AFD__.history
       })))
     }catch(err){
       swal("Erro na execução", err.message, "error")
@@ -103,7 +103,7 @@ export default function Editor(props:IEditorProps) {
       {
         word: '',
         result: window.__AFD__.run('') ? 'success' : 'error',
-        history: []
+        history: window.__AFD__.history
       }
     ])
   }
@@ -211,7 +211,7 @@ export default function Editor(props:IEditorProps) {
                 value={item.word}
                 onChange={(e) => executeFor(index, e.target.value)}
                 className={`nes-input is-${item.result}`}
-                placeholder={window.__AFD__?"Insira uma palavra":"Crie um Automato"}
+                placeholder={window.__AFD__?"Palavra vazia":"Crie um Automato"}
               />
               <details style={{marginTop:'1rem'}}>
                 <summary>Histórico</summary>
