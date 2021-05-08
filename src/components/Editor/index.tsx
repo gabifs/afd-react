@@ -119,11 +119,23 @@ export default function Editor(props:IEditorProps) {
   const InputMessage = (props:IInputMessageProps) => {
     switch(props.result){
       case("error"):
-        return (<label className="nes-text is-error">Palavra rejeitada</label>)
+        return (
+          <span  className="nes-badge">
+            <span className="is-error">REJEITA</span>
+          </span>
+        )
       case("success"):
-        return (<label className="nes-text is-success">Palavra aceita</label>)
+        return (
+          <span className="nes-badge">
+            <span className="is-success">ACEITA</span>
+          </span>
+        )
       case("disabled"):
-        return (<label className="nes-text is-disabled">Crie um AFD</label>)
+        return (
+          <span className="nes-badge">
+            <span className="is-dark">_</span>
+          </span>
+        )
     }
   }
 
@@ -170,7 +182,7 @@ export default function Editor(props:IEditorProps) {
           <div className="editor__editorControl">
             <input
               type="button"
-              value="Executar"
+              value="Criar automato"
               className="nes-btn is-success"
               onClick={() => createAfd(grammar)}
             />
