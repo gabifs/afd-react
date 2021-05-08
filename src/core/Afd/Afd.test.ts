@@ -9,11 +9,11 @@ describe('Afd creates deterministic finite automaton', () => {
   describe('Afd should reject build a new afd:', ()=>{
     it('if a symbol does not bellong to the alphbet', ()=>{
       expect(() => new Afd(JSON.stringify(grammars['reject-alphbet'])))
-        .toThrowError(/symbol undefined/)
+        .toThrowError(/Simbolo da produção indefinido/)
     })
     it('if a state does not bellong to the state set', ()=>{
       expect(() => new Afd(JSON.stringify(grammars['reject-state'])))
-        .toThrowError(/state undefined/)
+        .toThrowError(/Estado da produção indefinido/)
     })
   })
 
