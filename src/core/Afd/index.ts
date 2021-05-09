@@ -3,7 +3,7 @@ export default class Afd {
   grammar: string
   grammarType: string
   name: string
-  states: Array<string>
+  states: Array<any>
   alphbet: Array<string>
   productions: any
   initialState: string
@@ -36,7 +36,7 @@ export default class Afd {
     this.currentState = initialState
     this.history = []
 
-    // this._minimization()
+    this._minimization()
   }
 
   run(word: string|Array<string> ):boolean{
@@ -135,4 +135,51 @@ export default class Afd {
     })
   }
 
+  protected _remove_unreachable_states(){
+    const graph = new Map()
+
+    for(const key of Object.keys(this.productions)){
+        graph.set(key, [])
+        for(const value of Object.values(this.productions[key])){
+          graph.get(key).push(value)
+        }
+    }
+    let stack = [this.initialState]
+
+    const reachable_states = new Set()
+    while(stack.length) {
+      let state = stack.pop()
+
+      if (!reachable_states.has(state)){
+        stack = [...stack, ...graph.get(state)]
+      }
+
+      reachable_states.add(state)
+    }
+    this.states = this.states.filter(state => reachable_states.has(state))
+    this.terminals = this.terminals.filter(state => reachable_states.has(state))
+    this.productions = Object.fromEntries(
+      Object.entries(this.productions)
+        .filter(entrie => reachable_states.has(entrie[0]))
+    )
+
+  }
+
+  print(){
+    console.log(
+      {
+        name: this.name,
+        states: this.states,
+        alphbet: this.alphbet,
+        productions: this.productions,
+        initialState: this.initialState,
+        terminals: this.terminals,
+      }
+    )
+  }
+
+  protected _minimization(){
+    this._remove_unreachable_states()
+    this.print()
+  }
 }

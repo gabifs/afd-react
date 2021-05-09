@@ -192,7 +192,7 @@ export default function Editor(props:IEditorProps) {
           <textarea
             name="editor"
             cols={90}
-            rows={30}
+            rows={20}
             value={grammar}
             onChange={handleGrammarChange}
             spellCheck="false"
