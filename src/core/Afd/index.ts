@@ -1,9 +1,11 @@
+import DisjointSet from '../classes/DisjointSet'
+
 export default class Afd {
 
   grammar: string
   grammarType: string
   name: string
-  states: Array<any>
+  states: Array<string>
   alphbet: Array<string>
   productions: any
   initialState: string
@@ -23,7 +25,7 @@ export default class Afd {
       initialState,
       terminals
     } = JSON.parse(grammar)
-    // !VALIDAR FORMATO DE ENTRADA
+
     // !AFD MINIMIZADO
 
     this.name = name
@@ -33,10 +35,10 @@ export default class Afd {
     this.productions = this._validatesProductions(productions)
     this.initialState = this._validatesInitialState(initialState)
     this.terminals = this._validatesTerminals(terminals)
-    this.currentState = initialState
     this.history = []
 
     this._minimization()
+    this.currentState = initialState
   }
 
   run(word: string|Array<string> ):boolean{
@@ -137,7 +139,6 @@ export default class Afd {
 
   protected _remove_unreachable_states(){
     const graph = new Map()
-
     for(const key of Object.keys(this.productions)){
         graph.set(key, [])
         for(const value of Object.values(this.productions[key])){
@@ -150,7 +151,7 @@ export default class Afd {
     while(stack.length) {
       let state = stack.pop()
 
-      if (!reachable_states.has(state)){
+      if (!reachable_states.has(state) && graph.get(state)){
         stack = [...stack, ...graph.get(state)]
       }
 
@@ -179,7 +180,114 @@ export default class Afd {
   }
 
   protected _minimization(){
+    this.alphbet = this.alphbet.slice(1)
+
+
     this._remove_unreachable_states()
+
+
+    const table = new Map()
+
+    const sortedStates = this.states.sort()
+
+    sortedStates.forEach((stateLine, index)=>{
+      const sortedTail = sortedStates.slice(index+1)
+      sortedTail.forEach(stateColumn => {
+
+        table.set([stateLine, stateColumn].toString(), (
+          this.terminals.includes(stateLine) !==
+          this.terminals.includes(stateColumn)
+        ))
+      })
+    })
+
+
+
+    let flag = true
+
+    while(flag){
+      flag = false
+
+      for(let [index, stateLine] of Object.entries(sortedStates)){
+
+        for(let stateColumn of sortedStates.slice(parseInt(index)+1)){
+
+          if (table.get([stateLine,stateColumn].toString())){
+            continue
+          }
+
+          for(let symbol of this.alphbet){
+            const t1 = this.productions[stateLine][symbol] || null
+            const t2 = this.productions[stateColumn][symbol] || null
+
+            if (t1 !== t2 && t1 && t2){
+              let key = [t1, t2].sort()
+              let marked = table.get(key.toString())
+              flag = flag || marked
+              table.set([stateLine, stateColumn].toString(), marked)
+
+              if(marked) break
+            }
+          }
+        }
+      }
+
+    }
+
+    const dset = new DisjointSet(this.states)
+
+    for (let [line_column, mark] of table.entries()){
+      let [line, column] = line_column.split(',')
+      if(!mark){
+        dset.union(line ,column)
+      }
+    }
+
+    this.states = dset.get().map(states => (
+      states.reduce((name, state)=> name+state, '')
+    ))
+
+    this.initialState = this.states.filter(state => state.includes(this.initialState))[0]
+
+    this.terminals = this.states.filter(state => {
+      let finded = false
+      for(let old_terminal of this.terminals){
+        finded = finded || state.includes(old_terminal)
+      }
+      return finded
+    })
+
+    this._updateProductions()
+
+    this.alphbet = ["", ...this.alphbet]
     this.print()
+  }
+
+  protected _updateProductions(){
+    let newProductions:any = {}
+
+    for(let [old_state, production] of Object.entries(this.productions)){
+      if (!newProductions[this._findUnion(old_state)]){
+        newProductions[this._findUnion(old_state)] = production
+      }else{
+        newProductions[this._findUnion(old_state)] = {
+          ...newProductions[this._findUnion(old_state)],
+          ...this.productions[this._findUnion(old_state)]
+        }
+      }
+    }
+
+    for(let state of this.states){
+      if(newProductions[state])
+      for(let s of Object.keys(newProductions[state])){
+        newProductions[state][s] = this._findUnion(newProductions[state][s])
+      }
+    }
+
+    this.productions = newProductions
+  }
+
+  protected _findUnion(old_state:string){
+    return this.states.filter(state => state.includes(old_state))[0]
   }
 }
