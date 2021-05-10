@@ -4,6 +4,7 @@ import swal from 'sweetalert';
 import './style.css'
 
 import Afd from '../../core/Afd'
+import { parseJSON } from '../../core/utils'
 
 declare global {
   var __AFD__: Afd;
@@ -86,7 +87,7 @@ export default function Editor(props:IEditorProps) {
 
   function createAfd(grammar:string){
     try{
-      window.__AFD__ = new Afd(grammar)
+      window.__AFD__ = new Afd(parseJSON(grammar))
       setWordList(wordList.map(() => ({
         word: '',
         result: window.__AFD__.run('') ? 'success' : 'error',
