@@ -1,6 +1,8 @@
 #editor {
   padding: 1rem;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .editor__controlsBar {
@@ -33,10 +35,12 @@
 
 .editor__group1 {
   height: fit-content;
+  max-width: 49%;
 }
 
 .editor__group2 {
   width: 100%;
+  max-width: 49%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -50,6 +54,23 @@
 .editor__wordsInputs {
   width: 100%;
   position: relative;
+}
+
+.editor__group3 {
+  width: 100%;
+  max-width: 65%;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor__wordTupleView{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.editor__listView {
+  width: 100%;
 }
 
 @media screen and (max-width: 768px) {

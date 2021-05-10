@@ -4,7 +4,7 @@ import swal from 'sweetalert';
 import './style.css'
 
 import Afd from '../../core/Afd'
-import { parseJSON } from '../../core/utils'
+import { parseJSON, parseWordTupleList } from '../../core/utils'
 
 declare global {
   var __AFD__: Afd;
@@ -23,6 +23,7 @@ export default function Editor(props:IEditorProps) {
       history: []
     }
   ])
+  const [listFilter, setListFilter] = useState([['','']])
 
   function handleNewFile(event:React.ChangeEvent<HTMLInputElement>) {
     event.preventDefault()
@@ -164,6 +165,29 @@ export default function Editor(props:IEditorProps) {
 
   }
 
+  function handleWordTupleList(event:React.ChangeEvent<HTMLInputElement>) {
+    event.preventDefault()
+
+    const file = event.target.files[0];
+
+    if (file) {
+      try {
+        const reader = new FileReader();
+
+        reader.onloadend= () => {
+          setListFilter(parseWordTupleList(reader.result as string) || [['','']])
+        }
+
+        reader.readAsText(file);
+      } catch (err) {
+        swal('Erro', err.message, "error")
+      }
+
+    }else {
+      swal("Nenhum arquivo")
+    }
+  }
+
   return (
     <section id="editor">
       <div className="editor__group1 nes-container is-rounded">
@@ -207,7 +231,7 @@ export default function Editor(props:IEditorProps) {
           type="button"
           value="Add input"
           className={`nes-btn is-${window.__AFD__ ? "warning" : "disabled"}`}
-          onClick={() => addInput()}
+          onClick={() => window.__AFD__? addInput() : false}
         />
         {
           wordList.map((item, index)=>(
@@ -260,6 +284,72 @@ export default function Editor(props:IEditorProps) {
           )
         }
 
+      </div>
+      <div className="editor__group3 nes-container is-rounded">
+        <div className="editor__editorControl">
+          <label className={`nes-btn is-${window.__AFD__ ? "primary" : "disabled"}`}>
+            <span>
+              Lista de duplas de palavras
+            </span>
+            <input
+              type="file"
+              className={`editor__fileInput`}
+              onChange={ window.__AFD__ ? handleWordTupleList : ()=>false }
+            />
+          </label>
+        </div>
+        <div className="editor__wordTupleView">
+          <div className="editor__listView lists nes-container is-rounded is-dark">
+            <h3>Input</h3>
+            <ul className="is-circle">
+              {
+                listFilter.map((wordTuple, index) => {
+                  if (window.__AFD__){
+                    if(window.__AFD__.run(wordTuple[0]) && window.__AFD__.run(wordTuple[1])) {
+                      return (
+                        <li className="nes-text is-primary"
+                          key={index}
+                        >{`(${wordTuple[0]}, ${wordTuple[1]})`}</li>
+                      )
+                    }else{
+                      return (
+                        <li className="nes-text is-error"
+                          key={index}
+                        >{`(${wordTuple[0]}, ${wordTuple[1]})`}</li>
+                      )
+                    }
+                  }else{
+                    return false
+                  }
+
+
+                })
+              }
+            </ul>
+          </div>
+
+          <div className="editor__listView lists nes-container is-rounded is-dark">
+          <h3>Output</h3>
+            <ul className="is-circle">
+              {
+                listFilter
+                  .filter(wordTuple => (
+                    window.__AFD__ ?
+                    window.__AFD__.run(wordTuple[0]) &&
+                    window.__AFD__.run(wordTuple[0]) :
+                    false
+                  ))
+                  .map((wordTuple, index) => {
+                    return (
+                      <li className="nes-text is-success"
+                        key={index}
+                      >{`(${wordTuple[0]}, ${wordTuple[1]})`}</li>
+                    )
+                  })
+              }
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   )

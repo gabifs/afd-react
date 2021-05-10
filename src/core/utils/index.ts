@@ -1,3 +1,5 @@
+import swal from 'sweetalert'
+
 export function parseJSON(grammar:string){
   interface IObj{
     name:string,
@@ -55,5 +57,26 @@ export function parseJSON(grammar:string){
     return JSON.stringify(obj)
   }catch(err){
     throw new Error(`Formato de entrada errado`)
+  }
+}
+
+export function parseWordTupleList(text:string){
+  try{
+    return text
+          .trim()
+          .split("\n")
+          .map(tuple => {
+            tuple = tuple.trim()
+            if(tuple.match(/\(.+,.+\)/) && !tuple.match(/\(.+,.*,\)/)){
+              return tuple
+                      .slice(1, tuple.length-1)
+                      .split(",")
+                      .map(word => word.trim())
+            }else {
+              throw new Error("entrada errada")
+            }
+          })
+  }catch(err){
+    swal("Erro Formato", err.message, "error")
   }
 }
