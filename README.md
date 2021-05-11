@@ -1,46 +1,57 @@
-# Getting Started with Create React App
+# Automatos finitos determinísticos em Typescript
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Autores
+* Gabriel Fernandes Silva - 00261597
+* Nikolas Tesche - 00263055
+* Eduardo Braga Rhoden - 00305607
 
-## Available Scripts
+## Requisitos para a execução
 
-In the project directory, you can run:
+1. NodeJS >= v14.0.0
+2. Navegador moderno (Chrome, Mozilla, Edge,...)
+3. Conexão com a internet, para download das dependências
 
-### `yarn start`
+## Instalação do projeto
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+> A instalação das dependências é realizada com `npm` (node package manager) uma CLI que vem por padrão com o nodeJS.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1. Abra o diretório do projeto no terminal de sua preferência (cmd, Windows Terminal, git bash, bash, zsh, powershell)
+2. Instale as dependências do projeto:
+   1. Execute `npm install`
+   2. Terminada a instalação das dependências, verifique se não houveram erro ou warnings a serem resolvidos. Em alguns casos é necessário a execução de `npm audit fix`, para correção das dependências para o seu sistema operacional.
 
-### `yarn test`
+## Execução do projeto
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Com o terminal aberto no diretório do projeto:
 
-### `yarn build`
+1. Execute `npm start`, esse comando executará um script, escrito no `package.json`, para inicialização do projeto.
+2. Ao final da execução, será informado que projeto está executando em `http://localhost:3000`, se o NodeJS não abrir essa página automáticamente, você deverá abri-la no navegador de sua preferência.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Utilização do projeto
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+O projeto é dividido em 3 seções:
+1. Editor - Nele é possível carregar um arquivo ou digitar uma definição de AFD, seguindo o formato especificado. E criar o AFD definido.
+   ```txt
+   AUTÔMATO=({q0,q1,q2,q3},{a,b},Prog,q0,{q1,q3})
+   Prog
+   (q0,a)=q1
+   (q0,b)=q2
+   (q1,b)=q2
+   (q2,a)=q3
+   (q2,b)=q2
+   (q3,a)=q3
+   (q3,b)=q2
+   ```
+2. Lista de palavras - Nessa seção é possível inserir palavras a serem testadas no AFD criado, a seção só fica disponível após a criação do AFD.
+3. Lista de Duplas de palavras - Nesta seção é possível, carregar um arquivo com uma lista de duplas de palavras, a serem filtradas pelo AFD. Desde que o documento esteja do formato adequado.
+   ```txt
+   (abababa,ababa)
+   (abababa,aba)
+   (ababa,ababa)
+   (ababa,abab)
+   (ababa,abababa)
+   (ab,abababa)
+   (a,ababab)
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+> Esperamos que você tenha uma boa experiência!
