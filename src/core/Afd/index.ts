@@ -189,7 +189,7 @@ export default class Afd {
 
     const table = new Map()
 
-    const sortedStates = [...this.states]
+    const sortedStates = [...this.states].sort()
 
     sortedStates.forEach((stateLine, index)=>{
       const sortedTail = sortedStates.slice(index+1)
@@ -201,10 +201,11 @@ export default class Afd {
       })
     })
 
+    console.log(table)
 
     let flag = true
 
-    // table filling method
+    // método de preenchimento da tabela
     while(flag){
       flag = false
 
@@ -215,16 +216,18 @@ export default class Afd {
             continue
           }
 
-          // check if the states are distinguishable
+          // checa se os estados são distinguiveis
           for(let symbol of this.alphbet){
             const t1 = this.productions[stateLine][symbol]
             const t2 = this.productions[stateColumn][symbol]
 
             if (t1 !== t2){
-              let key = [t1,t2]
+              let key = [t1,t2].sort()
               let marked = table.get(key.toString())
+              if (marked === undefined){
+                console.log([stateLine,stateColumn], symbol, [t1,t2])
+              }
               flag = flag || marked
-              // debugger
               table.set([stateLine, stateColumn].toString(), marked)
 
               if(marked) break
@@ -234,6 +237,9 @@ export default class Afd {
       }
 
     }
+
+    console.log("2:",table)
+
 
     const dset = new DisjointSet(this.states)
 
