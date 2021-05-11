@@ -29,10 +29,12 @@ export function parseJSON(grammar:string){
     let [alphbet, rest2] = rest1.split('},')
     obj.alphbet = alphbet.split(',').map(item => item.trim())
 
-    let [prog_name, initial, rest3] = rest2.split(',')
+    let [prog_name_initial, rest3] = rest2.split(',{')
+
+    let [prog_name, initial] = prog_name_initial.split(',')
     obj.initialState = initial.trim()
 
-    let terminals = rest3.slice(1, rest3.length-2).split(',')
+    let terminals = rest3.slice(0, rest3.length-2).split(',')
     obj.terminals = terminals.map(item => item.trim())
 
     if(prog_name === lines[1]){
