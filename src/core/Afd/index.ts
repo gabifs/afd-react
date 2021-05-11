@@ -185,15 +185,15 @@ export default class Afd {
 
     this._remove_unreachable_states()
 
+    this._addReject()
 
     const table = new Map()
 
-    const sortedStates = this.states.sort()
+    const sortedStates = [...this.states]
 
     sortedStates.forEach((stateLine, index)=>{
       const sortedTail = sortedStates.slice(index+1)
       sortedTail.forEach(stateColumn => {
-
         table.set([stateLine, stateColumn].toString(), (
           this.terminals.includes(stateLine) !==
           this.terminals.includes(stateColumn)
@@ -202,28 +202,29 @@ export default class Afd {
     })
 
 
-
     let flag = true
 
+    // table filling method
     while(flag){
       flag = false
 
       for(let [index, stateLine] of Object.entries(sortedStates)){
 
         for(let stateColumn of sortedStates.slice(parseInt(index)+1)){
-
           if (table.get([stateLine,stateColumn].toString())){
             continue
           }
 
+          // check if the states are distinguishable
           for(let symbol of this.alphbet){
-            const t1 = this.productions[stateLine][symbol] || null
-            const t2 = this.productions[stateColumn][symbol] || null
+            const t1 = this.productions[stateLine][symbol]
+            const t2 = this.productions[stateColumn][symbol]
 
-            if (t1 !== t2 && t1 && t2){
-              let key = [t1, t2].sort()
+            if (t1 !== t2){
+              let key = [t1,t2]
               let marked = table.get(key.toString())
               flag = flag || marked
+              // debugger
               table.set([stateLine, stateColumn].toString(), marked)
 
               if(marked) break
@@ -244,15 +245,15 @@ export default class Afd {
     }
 
     this.states = dset.get().map(states => (
-      states.reduce((name, state)=> name+state, '')
+      states.reduce((name, state)=> name ? name+"^"+state : state, '')
     ))
 
-    this.initialState = this.states.filter(state => state.includes(this.initialState))[0]
+    this.initialState = this.states.filter(state => state.split("^").includes(this.initialState))[0]
 
     this.terminals = this.states.filter(state => {
       let finded = false
       for(let old_terminal of this.terminals){
-        finded = finded || state.includes(old_terminal)
+        finded = finded || state.split("^").includes(old_terminal)
       }
       return finded
     })
@@ -288,6 +289,26 @@ export default class Afd {
   }
 
   protected _findUnion(old_state:string){
-    return this.states.filter(state => state.includes(old_state))[0]
+    return this.states.filter(state => state.split("^").includes(old_state))[0]
+  }
+
+  protected _addReject(){
+    this.states = [...this.states, "REJECT"]
+
+    for(let start of this.states){
+      if(!this.productions[start]){
+        this.productions[start] = {}
+      }
+
+      for( let symbol of this.alphbet){
+        if(!this.productions[start][symbol]){
+          this.productions[start] = {
+            ...this.productions[start],
+            [symbol]: "REJECT"
+          }
+        }
+      }
+
+    }
   }
 }
