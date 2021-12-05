@@ -1,7 +1,8 @@
+import './style.css'
+
 import React from 'react'
 import { useState } from 'react'
-import swal from 'sweetalert';
-import './style.css'
+import swal from 'sweetalert'
 
 import Afd from '../../core/Afd'
 import { parseJSON, parseWordTupleList } from '../../core/utils'
@@ -336,7 +337,7 @@ export default function Editor(props:IEditorProps) {
                   .filter(wordTuple => (
                     window.__AFD__ ?
                     window.__AFD__.run(wordTuple[0]) &&
-                    window.__AFD__.run(wordTuple[0]) :
+                    window.__AFD__.run(wordTuple[1]) :
                     false
                   ))
                   .map((wordTuple, index) => {
