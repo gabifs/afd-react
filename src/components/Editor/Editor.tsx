@@ -11,12 +11,8 @@ declare global {
   var __AFD__: Afd;
 }
 
-interface IEditorProps{
-  grammarState: [string, Function]
-}
-
-export default function Editor(props:IEditorProps) {
-  const [grammar, setGrammar] = props.grammarState
+export default function Editor() {
+  const [grammar, setGrammar] = useState(``)
   const [wordList, setWordList] = useState([
     {
       word: '',
